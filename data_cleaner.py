@@ -67,7 +67,6 @@ def get_merged_data(file_name, vertical_axis_name='code', horizontal_axis_name='
     # Finish the progressbar.
     bar.finish()
 
-    result_data = result_data.dropna()
     return result_data
 
 
