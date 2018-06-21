@@ -4,7 +4,7 @@
 :Date: 2017. 11. 24.
 """
 import pandas as pd
-import progressbar
+from tqdm import tqdm
 
 
 def get_source_path(file_name, extension='xlsx'):
@@ -43,10 +43,7 @@ def get_merged_data(file_name, vertical_axis_name='code', horizontal_axis_name='
     # Initialize result DataFrame.
     result_data = pd.DataFrame(columns=[])
 
-    # Initialize a progressbar.
-    widgets = [progressbar.Percentage(), progressbar.Bar()]
-    bar = progressbar.ProgressBar(widgets=widgets, max_value=(len(sheet_names) + 1)).start()
-    for index, sheet_name in enumerate(sheet_names):
+    for index, sheet_name in tqdm(enumerate(sheet_names)):
         original_data = get_excel_data(file_name, sheet_name)
         flatten_data = pd.melt(original_data, id_vars=[vertical_axis_name], var_name=horizontal_axis_name,
                                value_name=sheet_name)
@@ -60,12 +57,6 @@ def get_merged_data(file_name, vertical_axis_name='code', horizontal_axis_name='
 
         flatten_data = flatten_data.set_index(keys=[vertical_axis_name, horizontal_axis_name])
         result_data = pd.concat([result_data, flatten_data], axis=1, join='outer')
-
-        # Update the progressbar.
-        bar.update(index + 1)
-
-    # Finish the progressbar.
-    bar.finish()
 
     return result_data
 
